@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Showcase Projects</title>
+  <style>
+    body { font-family: Arial; }
+    .project { border: 1px solid #ccc; margin: 10px; padding: 10px; }
+  </style>
+</head>
+<body>
+  <h1>Project Showcase</h1>
+  <div id="project-list"></div>
+
+  <script>
+    // Fetch all projects
+    fetch('/api/projects')
+      .then(response => response.json())
+      .then(projects => {
+        const container = document.getElementById('project-list');
+        projects.forEach(project => {
+          const div = document.createElement('div');
+          div.className = 'project';
+          div.innerHTML = `
+            <h3>${project.name}</h3>
+            <p>${project.description}</p>
+            <p><strong>Technologies:</strong> ${project.technologies}</p>
+            <button onclick="generateSummary(${project.id}, this)">Generate Summary</button>
+            <p class="summary"></p>
+          `;
+          container.appendChild(div);
+        });
+      });
+
+    function generateSummary(id, button) {
+      fetch(`/api/projects/${id}/summary`)
+        .then(response => response.json())
+        .then(data => {
+          const summaryElement = button.nextElementSibling;
+          summaryElement.textContent = data.summary;
+        });
+    }
+  </script>
+</body>
+</html>
